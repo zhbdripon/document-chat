@@ -2,6 +2,10 @@ import streamlit as st
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
+from langchain.chat_models import ChatOpenAI
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import DocArrayInMemorySearch
+from langchain.indexes import VectorstoreIndexCreator
 
 from utils import save_uploaded_file, delete_previous_uploaded_files
 
@@ -14,9 +18,6 @@ if "upload_key" not in st.session_state:
     st.session_state.upload_key = "initial"
 
 delete_previous_uploaded_files()
-
-st.write("""# Streamlit Example
-This is a simple example of using Streamlist to create a list of items with interactive features.""")
 
 st.title("Upload PDF(max 100 page & 10MB)")
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf", key=st.session_state.upload_key)
@@ -34,6 +35,7 @@ def get_file_size(uploaded_file):
 
 if uploaded_file is not None:
     file_path = save_uploaded_file(uploaded_file)
+    st.session_state.messages = [{"role": "assistant", "content": "Hi! Ask me about your document?"}]
     st.write("File uploaded successfully!")
 
     with st.spinner("Wait for it...", show_time=True):
@@ -56,5 +58,37 @@ if uploaded_file is not None:
     
 if is_file_valid:
     st.write(f"Number of pages in the document: {len(pages)}")
-    st.write("First page content:")
-    st.write(pages[0].page_content)
+
+    llm_model = "gpt-3.5-turbo"
+    llm = ChatOpenAI(temperature=0.9, model=llm_model)
+
+
+    index = VectorstoreIndexCreator(
+        vectorstore_cls=DocArrayInMemorySearch,
+        embedding=OpenAIEmbeddings(),
+    ).from_loaders([pdf_loader])
+
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role": "assistant", "content": "Hi! Ask me about your document?"}]
+
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    # Chat input box
+    prompt = st.chat_input("Say something...")
+
+    if prompt:
+        # Add user message to history
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        # Get assistant response from OpenAI
+        with st.chat_message("assistant"):
+            response = index.query(prompt, llm=llm)
+            assistant_reply = response
+            st.markdown(assistant_reply)
+
+        # Save assistant reply to history
+        st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
