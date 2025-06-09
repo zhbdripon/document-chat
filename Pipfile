@@ -12,6 +12,7 @@ python-dotenv = "*"
 openai = "*"
 tiktoken = "*"
 docarray = "*"
+streamlit = "*"
 
 [dev-packages]
 
