@@ -20,22 +20,27 @@ if "upload_key" not in st.session_state:
 delete_previous_uploaded_files()
 
 st.title("Upload PDF(max 100 page & 10MB)")
-uploaded_file = st.file_uploader("Choose a PDF file", type="pdf", key=st.session_state.upload_key)
+uploaded_file = st.file_uploader(
+    "Choose a PDF file", type="pdf", key=st.session_state.upload_key
+)
 
 pdf_loader = None
 pages = None
 is_file_valid = False
 
+
 def get_file_size(uploaded_file):
     if uploaded_file is None:
         return None
-    
+
     return uploaded_file.size / (1024 * 1024)  # Convert to MB
 
 
 if uploaded_file is not None:
     file_path = save_uploaded_file(uploaded_file)
-    st.session_state.messages = [{"role": "assistant", "content": "Hi! Ask me about your document?"}]
+    st.session_state.messages = [
+        {"role": "assistant", "content": "Hi! Ask me about your document?"}
+    ]
     st.write("File uploaded successfully!")
 
     with st.spinner("Wait for it...", show_time=True):
@@ -55,13 +60,12 @@ if uploaded_file is not None:
         else:
             st.session_state.upload_key = str(hash(st.session_state.upload_key))
 
-    
+
 if is_file_valid:
     st.write(f"Number of pages in the document: {len(pages)}")
 
     llm_model = "gpt-3.5-turbo"
     llm = ChatOpenAI(temperature=0.9, model=llm_model)
-
 
     index = VectorstoreIndexCreator(
         vectorstore_cls=DocArrayInMemorySearch,
@@ -69,7 +73,9 @@ if is_file_valid:
     ).from_loaders([pdf_loader])
 
     if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": "Hi! Ask me about your document?"}]
+        st.session_state.messages = [
+            {"role": "assistant", "content": "Hi! Ask me about your document?"}
+        ]
 
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
@@ -91,4 +97,6 @@ if is_file_valid:
             st.markdown(assistant_reply)
 
         # Save assistant reply to history
-        st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": assistant_reply}
+        )

@@ -27,6 +27,7 @@ def save_uploaded_file(uploaded_file, upload_dir=file_upload_dir):
 
     return file_path
 
+
 def delete_previous_uploaded_files():
     if os.path.exists(file_upload_dir):
         shutil.rmtree(file_upload_dir)

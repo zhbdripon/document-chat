@@ -13,6 +13,8 @@ openai = "*"
 tiktoken = "*"
 docarray = "*"
 streamlit = "*"
+ruff = "*"
+pre-commit = "*"
 
 [dev-packages]
 
