@@ -15,6 +15,7 @@ docarray = "*"
 streamlit = "*"
 ruff = "*"
 pre-commit = "*"
+langchain-openai = "*"
 
 [dev-packages]
 

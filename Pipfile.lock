@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f800133957ec64bed78035ecee8e0bc09e8dd9c708a37e41decdbdd0822a1cf4"
+            "sha256": "620fef9da28271d2b6e2581eeb1245eb87127b017f2d632df041468d10d37748"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -829,6 +829,15 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==0.3.64"
+        },
+        "langchain-openai": {
+            "hashes": [
+                "sha256:470126f54b754b55a421bd0ffcb53671355700b42f0689a80187d53df20c6759",
+                "sha256:9d1f447af2e15d5d6b7e0c5552052e08d1dd4aa1c9b537bcde47534792a7f244"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9'",
+            "version": "==0.3.21"
         },
         "langchain-text-splitters": {
             "hashes": [

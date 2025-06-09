@@ -2,9 +2,9 @@ import streamlit as st
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import DocArrayInMemorySearch
+from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain.indexes import VectorstoreIndexCreator
 
 from utils import save_uploaded_file, delete_previous_uploaded_files
