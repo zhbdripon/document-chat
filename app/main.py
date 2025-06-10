@@ -6,6 +6,7 @@ from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain.indexes import VectorstoreIndexCreator
+from langchain.chains import ConversationalRetrievalChain
 
 from utils import save_uploaded_file, delete_previous_uploaded_files
 
@@ -72,31 +73,35 @@ if is_file_valid:
         embedding=OpenAIEmbeddings(),
     ).from_loaders([pdf_loader])
 
+    retriever = index.vectorstore.as_retriever()
+    qa_chain = ConversationalRetrievalChain.from_llm(llm, retriever)
+
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {"role": "assistant", "content": "Hi! Ask me about your document?"}
         ]
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
 
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Chat input box
     prompt = st.chat_input("Say something...")
 
     if prompt:
-        # Add user message to history
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Get assistant response from OpenAI
         with st.chat_message("assistant"):
-            response = index.query(prompt, llm=llm)
-            assistant_reply = response
+            result = qa_chain(
+                {"question": prompt, "chat_history": st.session_state.chat_history}
+            )
+            assistant_reply = result["answer"]
             st.markdown(assistant_reply)
 
-        # Save assistant reply to history
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_reply}
         )
+        st.session_state.chat_history.append((prompt, assistant_reply))
