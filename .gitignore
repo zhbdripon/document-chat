@@ -2,3 +2,4 @@
 data/*
 temporary_upload_data/*
 .ruff_cache
+persist_vectorstore/*

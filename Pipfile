@@ -16,6 +16,10 @@ streamlit = "*"
 ruff = "*"
 pre-commit = "*"
 langchain-openai = "*"
+chromadb = "*"
+langsmith = "*"
+langchain-core = "*"
+langgraph = "*"
 
 [dev-packages]
 

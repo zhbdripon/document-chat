@@ -10,3 +10,5 @@ pre-commit install
 
 // manually run lint
 pre-commit run --all-files
+
+// python 3.9
